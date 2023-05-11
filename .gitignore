@@ -6,7 +6,7 @@
 .pnp.js
 
 .idea
-yarn.lock
+
 
 # testing
 /coverage
