@@ -29,7 +29,6 @@ const MyFileUpload = () => {
         debugger
         e.preventDefault();
         console.log(file)
-        alert(JSON.stringify(file))
         //if await is removed, console log will be called before the uploadFile() is executed completely.
         //since the await is added, this will pause here then console log will be called
         const formData = new FormData();
