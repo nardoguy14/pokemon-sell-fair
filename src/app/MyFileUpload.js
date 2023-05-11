@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import axios from "axios";
-import {Col, Row, Table} from 'react-bootstrap';
+import {Col, ListGroup, Row, Table} from 'react-bootstrap';
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import React, { Component } from 'react';
@@ -9,7 +9,16 @@ import React, { Component } from 'react';
 export default class SellTable extends Component {
     constructor(props) {
         super(props)
-        this.state = {data: this.props.data};
+
+        var sellPrices = Array(this.props.data.length).fill(0)
+        const nextSellPrices= sellPrices.map((c, i) => {
+            return 0.7 * this.determinePrice(this.props.data[i]);
+        });
+        this.state = {
+            data: this.props.data,
+            percentages: Array(this.props.data.length).fill(0.7),
+            sellPrices: nextSellPrices
+        };
 
     }
 
@@ -17,76 +26,131 @@ export default class SellTable extends Component {
 
     }
 
-    makeRows(){
-        var rows = []
-        var formatter = new Intl.NumberFormat('en-US', {
-            style: 'currency',
-            currency: 'USD',
-            minimumFractionDigits: 0,
-            maximumFractionDigits: 4,
+    changeSellPercentage(row, e) {
+        const nextPercentages = this.state.percentages.map((c, i) => {
+            if (i === row) {
+                return e.target.value;
+            } else {
+                return c;
+            }
         });
 
-        this.state.data.forEach(card => {
-                var imageUrl = card.images.small
-                var cardUrl = card.tgcplayer.url
-
-
-
-
-
-                try {
-                    if ("normal" in card.tgcplayer.prices && card.tgcplayer.prices.normal !== null) {
-                        var price = card.tgcplayer.prices.normal.market
-                    }
-                    else if("holofoil" in card.tgcplayer.prices && card.tgcplayer.prices.holofoil !== null){
-                        var price = card.tgcplayer.prices.holofoil.market
-                    }
-                    else {
-                        console.log("ERRRRORRR")
-                        console.log(card.tgcplayer.prices)
-                        var price = 999999
-                    }
-                } catch(error){
-                    console.log("ERRRRORRR")
-                    console.log(card.tgcplayer.prices)
-                    var price = 999999
-                }
-
-
-                rows.push(
-                    <tr>
-                        <td>
-                            <img src={imageUrl}/>
-                        </td>
-                        <td>
-                            <a href={cardUrl}>{card.name}</a>
-                        </td>
-                        <td>${price}</td>
-                        <td>{0.7}%</td>
-                        <td>{formatter.format(price * 0.7)}</td>
-                    </tr>
-                )
+        const nextSellPrices= this.state.sellPrices.map((c, i) => {
+            if (i === row) {
+                return nextPercentages[row] * this.determinePrice(this.state.data[row]);
+            } else {
+                return c;
             }
-        )
+        });
+        this.setState({
+            percentages: nextPercentages,
+            sellPrices: nextSellPrices
+        })
+    }
+
+    determinePrice(card) {
+        try {
+            if ("normal" in card.tgcplayer.prices && card.tgcplayer.prices.normal !== null) {
+                var price = card.tgcplayer.prices.normal.market
+            }
+            else if("holofoil" in card.tgcplayer.prices && card.tgcplayer.prices.holofoil !== null){
+                var price = card.tgcplayer.prices.holofoil.market
+            }
+            else {
+                var price = 999999
+            }
+        } catch(error){
+            console.log("error")
+            console.log(card.tgcplayer.prices)
+            var price = 999999
+        }
+        return price
+    }
+
+    usdformatter = new Intl.NumberFormat('en-US', {
+        style: 'currency',
+        currency: 'USD',
+        minimumFractionDigits: 0,
+        maximumFractionDigits: 4,
+    });
+
+    makeRows(){
+        var rows = []
+
+        this.state.data.forEach((card, index) => {
+            var imageUrl = card.images.small
+            var cardUrl = card.tgcplayer.url
+
+            var price = this.determinePrice(card)
+
+            rows.push(
+                <tr id={index}>
+                    <td>
+                        <img src={imageUrl}/>
+                    </td>
+                    <td>
+                        <a href={cardUrl} target="_blank">{card.name}</a>
+                    </td>
+                    <td>${price}</td>
+                    <td>
+                        <input id={"percentage-"+index}
+                               type="input"
+                               value={this.state.percentages[index]}
+                               onChange={(e) => this.changeSellPercentage(index, e)}
+                        />
+                    </td>
+                    <td>{this.usdformatter.format(this.state.sellPrices[index])}</td>
+                </tr>
+            )
+        })
         return rows
     }
 
     render() {
+        var totalMarketPrice = 0
+        var totalSellPrice = 0
+        this.state.data.forEach((card, i) =>{
+            var price = this.determinePrice(card)
+            totalMarketPrice += price
+            totalSellPrice += this.state.percentages[i] * price
+        })
+
         return (
-            <Table striped bordered hover>
-                <thead>
-                <tr>
-                    <th>Image</th>
-                    <th>Name & TCG Link</th>
-                    <th>Market Price</th>
-                    <th>Sell Percentage</th>
-                    <th>Sell Price</th>
-                </tr>
-                </thead>
-                <tbody>
-                {this.makeRows()}
-                </tbody>
-            </Table>
+            <div>
+                <ListGroup>
+                    <ListGroup.Item>
+                        <Row>
+                            <Col><b>Total Market Price</b>:</Col>
+                            <Col>{this.usdformatter.format(totalMarketPrice)}</Col>
+                        </Row>
+
+
+
+
+                    </ListGroup.Item>
+                    <ListGroup.Item>
+                        <Row>
+                            <Col><b>Total Sell Market Price</b>:</Col>
+                            <Col>{this.usdformatter.format(totalSellPrice)}</Col>
+                        </Row>
+                    </ListGroup.Item>
+                </ListGroup>
+
+                <Table striped bordered hover>
+                    <thead>
+                    <tr>
+                        <th></th>
+                        <th>Name & TCG Link</th>
+                        <th>Market Price</th>
+                        <th>Sell Percentage</th>
+                        <th>Sell Price</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {this.makeRows()}
+                    </tbody>
+                </Table>
+            </div>
         )
     }
 }
