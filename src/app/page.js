@@ -1,95 +1,86 @@
+"use client";
+import 'bootstrap/dist/css/bootstrap.min.css';
+
+<link
+    rel="stylesheet"
+    href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css"
+    integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65"
+    crossOrigin="anonymous"
+/>
+
 import Image from 'next/image'
-import styles from './page.module.css'
+import axios from 'axios';
 
-export default function Home() {
-  return (
-    <main className={styles.main}>
-      <div className={styles.description}>
-        <p>
-          Get started by editing&nbsp;
-          <code className={styles.code}>src/app/page.js</code>
-        </p>
+
+import Button from 'react-bootstrap/Button';
+import Form from 'react-bootstrap/Form';
+
+import { useState } from 'react';
+import {Col, Container, Nav, Navbar, NavDropdown, Row} from 'react-bootstrap';
+import SellTable from "@/app/MyFileUpload";
+
+const MyFileUpload = () => {
+    const [file, setFile ] = useState(null);
+    const [tableResults, setTableResults ] = useState(<div></div>);
+
+    const UPLOAD_ENDPOINT = "http://localhost:8000/dragonshield/cards/details";
+
+    const handleSubmit = (e) => {
+        debugger
+        e.preventDefault();
+        console.log(file)
+        alert(JSON.stringify(file))
+        //if await is removed, console log will be called before the uploadFile() is executed completely.
+        //since the await is added, this will pause here then console log will be called
+        const formData = new FormData();
+        formData.append("file", file, file.name);
+        axios.post(UPLOAD_ENDPOINT, formData, {
+            headers: {
+                "content-type": "multipart/form-data"
+            }
+        }).then(data => {
+            debugger
+            console.log("hello")
+            console.log(data.data);
+            setTableResults(<SellTable data={data.data} />)
+        });
+    };
+    const handleOnChange = e => {
+        console.log(e.target.files[0]);
+        setFile(e.target.files[0]);
+    };
+
+    return (
         <div>
-          <a
-            href="https://vercel.com?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            By{' '}
-            <Image
-              src="/vercel.svg"
-              alt="Vercel Logo"
-              className={styles.vercelLogo}
-              width={100}
-              height={24}
-              priority
-            />
-          </a>
+            <Navbar bg="light" expand="lg">
+                    <Container>
+                        <Navbar.Brand href="#home">Pokemon Sell Prices</Navbar.Brand>
+                        <Navbar.Toggle aria-controls="basic-navbar-nav" />
+                        <Navbar.Collapse id="basic-navbar-nav">
+                            <Nav className="me-auto">
+                                <Nav.Link href="#home">Home</Nav.Link>
+                            </Nav>
+                        </Navbar.Collapse>
+                    </Container>
+                </Navbar>
+            <Container style={{"marginTop": "20px"}}>
+                <Form style={{"marginBottom": "20px"}}>
+                    <Form.Group >
+                        <Form.Label>Upload CSV</Form.Label>
+                        <Form.Text className="text-muted">
+                            <Form.Control type="file"
+                                          onChange={(e) => handleOnChange(e)}
+                                          placeholder="" />
+                        </Form.Text>
+                        <Button style={{"marginTop":"10px"}} onClick={handleSubmit} variant="primary">
+                            Submit
+                        </Button>
+                    </Form.Group>
+                </Form>
+
+                {tableResults}
+            </Container>
         </div>
-      </div>
-
-      <div className={styles.center}>
-        <Image
-          className={styles.logo}
-          src="/next.svg"
-          alt="Next.js Logo"
-          width={180}
-          height={37}
-          priority
-        />
-      </div>
-
-      <div className={styles.grid}>
-        <a
-          href="https://beta.nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Docs <span>-&gt;</span>
-          </h2>
-          <p>Find in-depth information about Next.js features and API.</p>
-        </a>
-
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Learn <span>-&gt;</span>
-          </h2>
-          <p>Learn about Next.js in an interactive course with&nbsp;quizzes!</p>
-        </a>
-
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Templates <span>-&gt;</span>
-          </h2>
-          <p>Explore the Next.js 13 playground.</p>
-        </a>
-
-        <a
-          href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Deploy <span>-&gt;</span>
-          </h2>
-          <p>
-            Instantly deploy your Next.js site to a shareable URL with Vercel.
-          </p>
-        </a>
-      </div>
-    </main>
-  )
+    )
 }
+export default MyFileUpload
