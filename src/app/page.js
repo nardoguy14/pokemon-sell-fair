@@ -23,7 +23,7 @@ const MyFileUpload = () => {
     const [file, setFile ] = useState(null);
     const [tableResults, setTableResults ] = useState(<div></div>);
 
-    const UPLOAD_ENDPOINT = "http://localhost:8000/dragonshield/cards/details";
+    const UPLOAD_ENDPOINT = "https://svjf5pa6xj.execute-api.us-east-1.amazonaws.com/Prod/dragonshield/cards/details";
 
     const handleSubmit = (e) => {
         debugger
