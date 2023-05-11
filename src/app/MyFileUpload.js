@@ -151,6 +151,8 @@ export default class SellTable extends Component {
                     </tbody>
                 </Table>
             </div>
+
+
         )
     }
 }
