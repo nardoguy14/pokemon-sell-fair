@@ -159,7 +159,7 @@ export default class SellTable extends Component {
                     </ListGroup.Item>
                 </ListGroup>
 
-                <Table striped bordered hover>
+                <Table striped bordered hover responsive>
                     <thead>
                     <tr>
                         <th></th>
