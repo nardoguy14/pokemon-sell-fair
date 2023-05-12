@@ -16,14 +16,16 @@ import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 
 import { useState } from 'react';
-import {Col, Container, Nav, Navbar, NavDropdown, Row} from 'react-bootstrap';
+import {Col, Container, Nav, Navbar, NavDropdown, Row, Spinner} from 'react-bootstrap';
 import SellTable from "@/app/MyFileUpload";
 
 const MyFileUpload = () => {
     const [file, setFile ] = useState(null);
     const [tableResults, setTableResults ] = useState(<div></div>);
+    const [showSpinner, setSpinner ] = useState("none");
 
     const UPLOAD_ENDPOINT = "https://svjf5pa6xj.execute-api.us-east-1.amazonaws.com/Prod/dragonshield/cards/details";
+
 
     const handleSubmit = (e) => {
         debugger
@@ -42,12 +44,24 @@ const MyFileUpload = () => {
             console.log("hello")
             console.log(data.data);
             setTableResults(<SellTable data={data.data} />)
+            setSpinner("none")
         });
+        setSpinner(true)
     };
     const handleOnChange = e => {
         console.log(e.target.files[0]);
         setFile(e.target.files[0]);
     };
+
+    const spin = e => {
+        if(showSpinner === "none"){
+            return {display:"none"}
+        }
+        else{
+            return {}
+        }
+
+    }
 
     return (
         <div>
@@ -72,8 +86,17 @@ const MyFileUpload = () => {
                                           placeholder="" />
                         </Form.Text>
                         <Button style={{"marginTop":"10px"}} onClick={handleSubmit} variant="primary">
+                            <Spinner
+                                style={spin()}
+                                as="span"
+                                animation="border"
+                                size="sm"
+                                role="status"
+                                aria-hidden="true"
+                            />
                             Submit
                         </Button>
+
                     </Form.Group>
                 </Form>
 
