@@ -16,7 +16,8 @@ import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 
 import { useState } from 'react';
-import {Col, Container, Nav, Navbar, NavDropdown, Row, Spinner} from 'react-bootstrap';
+
+import {Accordion, Col, Container, Nav, Navbar, NavDropdown, Row, Spinner} from 'react-bootstrap';
 import SellTable from "@/app/MyFileUpload";
 
 const MyFileUpload = () => {
@@ -63,21 +64,53 @@ const MyFileUpload = () => {
 
     }
 
+    const clickLink = e => {
+        document.getElementById("downloadLink").click()
+    }
+
     return (
         <div>
             <Navbar bg="light" expand="lg">
-                    <Container>
-                        <Navbar.Brand href="#home">Pokemon Sell Prices</Navbar.Brand>
-                        <Navbar.Toggle aria-controls="basic-navbar-nav" />
-                        <Navbar.Collapse id="basic-navbar-nav">
-                            <Nav className="me-auto">
-                                <Nav.Link href="#home">Home</Nav.Link>
-                            </Nav>
-                        </Navbar.Collapse>
-                    </Container>
-                </Navbar>
+                <Container>
+                    <Navbar.Brand href="#home">Pokemon Sell Prices</Navbar.Brand>
+                    <Navbar.Toggle aria-controls="basic-navbar-nav" />
+                    <Navbar.Collapse id="basic-navbar-nav">
+                        <Nav className="me-auto">
+                            <Nav.Link href="#home">Home</Nav.Link>
+                        </Nav>
+                    </Navbar.Collapse>
+                </Container>
+            </Navbar>
+
             <Container style={{"marginTop": "20px"}}>
-                <Form style={{"marginBottom": "20px"}}>
+                <Accordion>
+                    <Accordion.Item eventKey="0">
+                        <Accordion.Header>Purpose</Accordion.Header>
+                        <Accordion.Body>
+                            This app should be used in conjuction with TGC Dragonshield app.
+                            <br/><br/>
+                            The flow should be to create an inventory via the app then export it out
+                            as a csv file.
+                            <br/><br/>
+                            Utilizing the csv file you are able to provide it to this
+                            application to generate a set of prices that the cards would be sold out
+                            given a discount that shops usually take.
+                            <br/><br/>
+                            For instance, if a one dollar
+                            card was to be sold and the shop gives at highest 60% the value of the card
+                            this app would tell us the revenue we'd receive from that the card.
+                        </Accordion.Body>
+                    </Accordion.Item>
+                    <Accordion.Item eventKey="1">
+                        <Accordion.Header>Example CSV File</Accordion.Header>
+                        <Accordion.Body>
+                            <Button onClick={clickLink}> Download File</Button>
+                            <a id="downloadLink" style={{display:"none"}} href={"https://www.dropbox.com/s/goiqg22coh214ix/example.csv?dl=1"} download>Download file</a>
+                        </Accordion.Body>
+                    </Accordion.Item>
+
+                </Accordion>
+                <Form style={{marginTop: "20px", "marginBottom": "20px"}}>
                     <Form.Group >
                         <Form.Label>Upload CSV</Form.Label>
                         <Form.Text className="text-muted">
