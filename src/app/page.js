@@ -18,7 +18,8 @@ import Form from 'react-bootstrap/Form';
 import { useState } from 'react';
 
 import {Accordion, Col, Container, Nav, Navbar, NavDropdown, Row, Spinner} from 'react-bootstrap';
-import SellTable from "@/app/MyFileUpload";
+import SellTableComponent from "@/app/SellTableComponent";
+import InfoComponent from "@/app/InfoComponent";
 
 const MyFileUpload = () => {
     const [file, setFile ] = useState(null);
@@ -44,7 +45,7 @@ const MyFileUpload = () => {
             debugger
             console.log("hello")
             console.log(data.data);
-            setTableResults(<SellTable data={data.data} />)
+            setTableResults(<SellTableComponent data={data.data} />)
             setSpinner("none")
         });
         setSpinner(true)
@@ -64,10 +65,6 @@ const MyFileUpload = () => {
 
     }
 
-    const clickLink = e => {
-        document.getElementById("downloadLink").click()
-    }
-
     return (
         <div>
             <Navbar bg="light" expand="lg">
@@ -83,34 +80,7 @@ const MyFileUpload = () => {
             </Navbar>
 
             <Container style={{"marginTop": "20px"}}>
-                <Accordion>
-
-                    <Accordion.Item eventKey="0">
-                        <Accordion.Header>Purpose</Accordion.Header>
-                        <Accordion.Body>
-                            This app should be used in conjuction with TGC Dragonshield app.
-                            <br/><br/>
-                            The flow should be to create an inventory via the app then export it out
-                            as a csv file.
-                            <br/><br/>
-                            Utilizing the csv file you are able to provide it to this
-                            application to generate a set of prices that the cards would be sold out
-                            given a discount that shops usually take.
-                            <br/><br/>
-                            For instance, if a one dollar
-                            card was to be sold and the shop gives at highest 60% the value of the card
-                            this app would tell us the revenue we wouldd receive from that the card.
-                        </Accordion.Body>
-                    </Accordion.Item>
-                    <Accordion.Item eventKey="1">
-                        <Accordion.Header>Example CSV File</Accordion.Header>
-                        <Accordion.Body>
-                            <Button onClick={clickLink}> Download File</Button>
-                            <a id="downloadLink" style={{display:"none"}} href={"https://www.dropbox.com/s/goiqg22coh214ix/example.csv?dl=1"} download>Download file</a>
-                        </Accordion.Body>
-                    </Accordion.Item>
-
-                </Accordion>
+                <InfoComponent />
                 <Form style={{marginTop: "20px", "marginBottom": "20px"}}>
                     <Form.Group >
                         <Form.Label>Upload CSV</Form.Label>

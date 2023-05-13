@@ -6,7 +6,7 @@ import Form from 'react-bootstrap/Form';
 import React, { Component } from 'react';
 
 
-export default class SellTable extends Component {
+export default class SellTableComponent extends Component {
     constructor(props) {
         super(props)
         const DEFAULT_PERCENTAGE = 0.7
