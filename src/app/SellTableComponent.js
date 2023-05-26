@@ -106,7 +106,7 @@ export default class SellTableComponent extends Component {
             rows.push(
                 <tr id={index}>
                     <td>
-                        <img src={imageUrl}/>
+                        <img style={{height:"100px", width: "auto"}} src={imageUrl}/>
                     </td>
                     <td>
                         <a href={cardUrl} target="_blank">{card.name}</a>
